@@ -1,0 +1,25 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.MantaTerminal" parent="BaseAppTheme">
+
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Theme.MantaTerminal.NoActionBar" parent="Theme.MantaTerminal">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.TesterApp.AppBarOverlay" parent="Theme.MantaTerminal" >
+
+    </style>
+    <style name="Theme.TesterApp.PopupOverlay" parent="Theme.MantaTerminal">
+
+    </style>
+    <style name="SplashScreenTheme" parent="Theme.MantaTerminal.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+</resources>

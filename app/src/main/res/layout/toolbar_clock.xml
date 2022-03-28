@@ -1,0 +1,16 @@
+<android.widget.TextClock xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/textClock"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:format12Hour="@null"
+    android:format24Hour="dd.MM.yyyy        HH:mm:ss"
+
+    android:gravity="center_horizontal"
+    android:paddingStart="10dp"
+    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+    android:textColor="@color/NVSPGrey"
+
+    android:textSize="20sp"
+    android:visibility="visible"
+    tools:visibility="visible" />

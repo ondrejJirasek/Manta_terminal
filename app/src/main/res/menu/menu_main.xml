@@ -1,0 +1,38 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.nvsp.testerapp.ui.activity.MainActivity">
+    <item
+
+        android:id="@+id/action_state_WS"
+
+        android:checkable="false"
+        android:enabled="false"
+        android:icon="@android:drawable/presence_offline"
+        android:visible="true"
+        app:showAsAction="always"
+        android:title="TODO" />
+    <item
+
+        android:id="@+id/action_login"
+
+        android:icon="@drawable/ic_user"
+        android:title="TODO"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_LogOut"
+        android:orderInCategory="100"
+        android:title="@string/action_Logout"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_finish"
+        android:orderInCategory="100"
+        android:title="@string/action_finish"
+        app:showAsAction="never" />
+</menu>
