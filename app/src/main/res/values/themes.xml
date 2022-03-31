@@ -22,4 +22,7 @@
     <style name="SplashScreenTheme" parent="Theme.MantaTerminal.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
+    <style name="Theme.MantaTerminal.oper_button" >
+        <item name="android:background">@drawable/button_oper_background_round_left_light</item>
+    </style>
 </resources>
