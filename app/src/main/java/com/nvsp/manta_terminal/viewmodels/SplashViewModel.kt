@@ -3,6 +3,7 @@ package com.nvsp.manta_terminal.viewmodels
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.android.volley.Request
 import com.google.gson.Gson
 import com.nvsp.manta_terminal.BaseApp
 
@@ -12,14 +13,22 @@ import com.nvsp.nvmesapplibrary.database.LibRepository
 import com.nvsp.nvmesapplibrary.settings.models.Settings
 
 import com.nvsp.nvmesapplibrary.App
-import com.nvsp.nvmesapplibrary.communication.models.Request
+
+
 import com.nvsp.nvmesapplibrary.communication.volley.ServiceVolley
 import com.nvsp.nvmesapplibrary.communication.volley.VolleySingleton
 import com.nvsp.nvmesapplibrary.rpc.OutData
 import com.nvsp.nvmesapplibrary.utils.CommonUtils
 import com.nvsp.nvmesapplibrary.utils.model.RemoteSettings
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
+import java.net.ConnectException
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Socket
 
 const val LOADED_SETTING=1
 const val CONECTED=2
@@ -41,7 +50,7 @@ class SplashViewModel(private val repository: LibRepository): BaseViewModel(repo
         Log.d("URL", "URL IS: ${Const.URL_BASE}")
         BaseApp.instance.refresh()
         splasCheckstatus.value=LOADED_SETTING
-        App.setip(set.ipAddress)
+        App.setip(set.ipAddress, set.port)
 
     }
     fun skipSettings(){
@@ -56,7 +65,8 @@ class SplashViewModel(private val repository: LibRepository): BaseViewModel(repo
     }
     fun loadRemoteSettings(context:Context){
         api.request(
-          Request(com.android.volley.Request.Method.POST,
+          com.nvsp.nvmesapplibrary.communication.models.Request(
+              Request.Method.POST,
           "Devices/CheckRegistration","",
               json = CommonUtils.getRegisterJson(context)
           )
@@ -75,45 +85,66 @@ class SplashViewModel(private val repository: LibRepository): BaseViewModel(repo
 fun testVersion(){
     splasCheckstatus.postValue(UPDATED)
 }
- fun testConection(ip:String){
-     var countOKConection=0
-     var numOfLostPacket=0
-     for(i in 0 until 10){ //5
-         if(isNetworkAvailable(ip)) {
-             numOfLostPacket = 0
-             splasCheckstatus.postValue(CONECTED)
-         }else{
-             numOfLostPacket++
-            Log.d("COMM", "LOST PACKET $numOfLostPacket")
-         }
-         if(numOfLostPacket >5)//2
-             splasCheckstatus.postValue(NO_CONECTED)
-     }
+    fun testConnection(ip:String, port: Int?){
+        CoroutineScope(Dispatchers.IO).launch {
+            var numOfLostPacket=0
+            for(i in 0 until 5){
+                Log.d("Test Connection", "test $i ... lost $numOfLostPacket ")
+                if(isNetworkAvailable(ip,port?:(80))){
+                    numOfLostPacket = 0
+                    splasCheckstatus.postValue(CONECTED)
+                    break
+                }else
+                    numOfLostPacket++
+                if(numOfLostPacket >2)
+                    splasCheckstatus.postValue( NO_CONECTED)
+            }
+        }
 
 
- }
 
-    fun isNetworkAvailable(ip:String): Boolean {
+    }
+
+    private  fun isNetworkAvailable(ip:String, port:Int, timeout:Int=1000): Boolean {
         if(ip.contains("ngrok"))
             return true
         else{
+            //  val address= InetAddress.getByName(ip+":$port")
+            // Log.d("TEST", "adress: ${address.hostAddress} ")
+            //return address.isReachable(timeout)
+
+            /* val runtime = Runtime.getRuntime()
+             try {
+                 val ipProcess = runtime.exec("/system/bin/ping -c 1 $ip")
+                 val exitValue = ipProcess.waitFor()
+                 return exitValue == 0
+
+             } catch (e: IOException) {
+                 e.printStackTrace()
+             } catch (e: InterruptedException) {
+                 e.printStackTrace()
+             }
+             return false*/
 
 
-            val runtime = Runtime.getRuntime()
             try {
-
-
-                val ipProcess = runtime.exec("/system/bin/ping -c 1 ${ip}") // TODO -> upravit adresu
-                val exitValue = ipProcess.waitFor()
-                 Log.d("PING", "PING \"/system/bin/ping -c 1 ${ip}\" RET: ${ipProcess.waitFor() }")
-                return exitValue == 0
-
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
+                val  socket = Socket()
+                val inetAdress = InetAddress.getByName(ip)
+                socket.connect(InetSocketAddress(inetAdress, port), timeout)
+                socket.close()
+                return true
             }
-            return false
+
+            catch(ce: ConnectException){
+                ce.printStackTrace()
+                return false
+            }
+
+            catch (ex:Exception ) {
+                ex.printStackTrace()
+                return false
+            }
+
         }
     }
 

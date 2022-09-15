@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvHead"
+            style="@style/dialogItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/loginOperation"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/img"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginStart="32dp"
+            android:adjustViewBounds="true"
+            android:visibility="gone"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:lottie_loop="true"
+            app:lottie_speed="1"
+            tools:ignore="ContentDescription"
+            tools:layout_editor_absoluteY="67dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/rfidInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:paddingStart="10dp"
+            app:endIconDrawable="@drawable/ic_qr"
+            app:endIconMode="custom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img"
+            app:layout_constraintTop_toBottomOf="@+id/tvHead">
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edBarcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@android:color/transparent"
+                android:hint="@string/barcodeOperation"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:selectAllOnFocus="true"
+
+
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnOk"
+            style="@style/dialogBtn"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@android:color/transparent"
+            android:enabled="false"
+            android:text="@android:string/ok"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rfidInputLayout" />
+
+        <Button
+            android:id="@+id/btnChooseFromList"
+            style="@style/dialogBtn"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginBottom="16dp"
+            android:background="@android:color/transparent"
+            android:text="@string/chooseFromList"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnOk"
+            app:layout_constraintStart_toEndOf="@+id/btnBack"
+            app:layout_constraintTop_toTopOf="@+id/btnBack" />
+
+        <Button
+            android:id="@+id/btnBack"
+            style="@style/dialogBtn"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+
+            android:layout_marginBottom="16dp"
+            android:background="@android:color/transparent"
+            android:text="@string/back"
+            android:visibility="visible"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnOk" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

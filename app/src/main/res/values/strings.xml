@@ -2,4 +2,7 @@
     <string name="app_name">Manta-Terminal</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="loginOperation">Přihlášení operace</string>
+    <string name="barcodeOperation">Čárový kód operace</string>
+    <string name="chooseFromList">Vybrat ze seznamu</string>
 </resources>

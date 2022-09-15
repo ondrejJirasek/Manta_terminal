@@ -7,13 +7,44 @@ plugins {
 
 android {
     compileSdk 31
+    def versionPropsFile = file('version.properties')
+    def versionBuild
 
+    if (versionPropsFile.canRead()) {
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        versionBuild = versionProps['VERSION_BUILD'].toInteger()
+    } else {
+        throw new FileNotFoundException("Could not read version.properties!")
+    }
+    ext.autoIncrementBuildNumber = {
+
+        if (versionPropsFile.canRead()) {
+            Properties versionProps = new Properties()
+            versionProps.load(new FileInputStream(versionPropsFile))
+            versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+            versionProps['VERSION_BUILD'] = versionBuild.toString()
+            versionProps.store(versionPropsFile.newWriter(), null)
+        } else {
+            throw new FileNotFoundException("Could not read version.properties!")
+        }
+    }
     defaultConfig {
         applicationId "com.nvsp.manta_terminal"
-        minSdk 23
+        minSdk 26
         targetSdk 31
         versionCode 1
-        versionName "1.0"
+        versionName "1.0 build("+versionBuild+")"
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+        def date = new Date()
+        def formattedDate = date.format('dd-MM-yyyy_HH-mm')
+        archivesBaseName = "MantaTerminal" + versionName + "_" + formattedDate
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.incremental": "true"]
+            }
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -22,6 +53,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    gradle.taskGraph.whenReady {taskGraph ->
+        if (taskGraph.hasTask(assembleDebug)) {  /* when run debug task */
+            autoIncrementBuildNumber()
+        } else if (taskGraph.hasTask(assembleRelease)) { /* when run release task */
+            autoIncrementBuildNumber()
         }
     }
     compileOptions {
@@ -49,6 +87,10 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    def nav_version = "2.5.0"
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 
     def koin_version= "3.2.0-beta-1"
     implementation "io.insert-koin:koin-core:$koin_version"
@@ -82,7 +124,7 @@ dependencies {
     //GSON
     implementation 'com.google.code.gson:gson:2.8.8'
 
-
-
+    implementation 'com.google.zxing:core:3.4.0'
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     kapt "com.android.databinding:compiler:$android_plugin_version"
 }

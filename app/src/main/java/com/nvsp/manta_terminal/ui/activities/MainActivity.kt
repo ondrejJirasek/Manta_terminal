@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         mViewModel.activeSetting.observe(this) {
             it?.let {
                 window.statusBarColor = it.getSettingColor(baseContext)
-                App.setip(it.ipAddress)
+                App.setip(it.ipAddress, it.port)
             }
         }
         mViewModel.connectionLiveData.observe(this){
@@ -145,8 +145,9 @@ class MainActivity : AppCompatActivity() {
         overridePendingTransition(com.nvsp.nvmesapplibrary.R.anim.slide_from_up,com.nvsp.nvmesapplibrary.R.anim.slide_to_down)
     }
     private fun initToolbar(){
+        LoginActivity.terminalMode=true
         setSupportActionBar(binding.toolbar)
-        Objects.requireNonNull(supportActionBar)?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
+        Objects.requireNonNull(supportActionBar)!!.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
         supportActionBar?.setCustomView(R.layout.toolbar_clock)
     }
     private fun conectionState(state: Boolean){

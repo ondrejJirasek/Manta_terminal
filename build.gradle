@@ -7,9 +7,9 @@ buildscript {
     }
     ext.android_plugin_version = '7.0.3'
     dependencies {
-        def nav_version = "2.3.5"
+        def nav_version = "2.4.2"
         classpath "com.android.tools.build:gradle:7.0.4"
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21'
         classpath "com.android.tools.build:gradle:$android_plugin_version"
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
 
