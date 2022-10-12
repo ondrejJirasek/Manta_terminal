@@ -5,21 +5,26 @@ import android.util.Log
 import com.google.gson.annotations.SerializedName
 
 data class Operator(
-    @SerializedName("ID")
+    @SerializedName("id")
     val id: Int,
-    @SerializedName("Code_EM")
-    val codeEm:Int,
-    @SerializedName("Name_EM")
+    @SerializedName("emCode")
+    val codeEm:String,
+    @SerializedName("emName")
     val nameEM: String,
-    @SerializedName("Code_Unit")
+    @SerializedName("unitCode")
     val codeUnit:String?,
-    @SerializedName("Name_Unit")
+    @SerializedName("unitName")
     val nameUnit:String?,
-    @SerializedName("Status_EM")
+    @SerializedName("emStatus")
     val statusEM:String,
-    @SerializedName("Color")
-    val color: Int?
+    @SerializedName("color")
+    val color:Int?,
+    @SerializedName("wpId")
+    val wpId:Int?
 ) {
+    companion object{
+        fun getUrl(wpId:Int) = "Employees/Workplace/$wpId"
+    }
     fun getColorHex(): Int? {
         Log.d("TASK_COLOR", "color is $color")
         if (color != null)

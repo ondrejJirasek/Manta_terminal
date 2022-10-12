@@ -25,10 +25,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.zxing.integration.android.IntentIntegrator
 import com.nvsp.LOGIN_OPERATION
 import com.nvsp.MODE_QUEUE
+import com.nvsp.TEAM_WORKING
 import com.nvsp.WORKPLACE_ID
 import com.nvsp.manta.MAINTERENCE
 import com.nvsp.manta.SICO_MODULE
 import com.nvsp.manta.WORK_QUEUE
+import com.nvsp.manta_terminal.BaseApp
 import com.nvsp.manta_terminal.R
 import com.nvsp.manta_terminal.adapters.OperatorAdapter
 import com.nvsp.manta_terminal.databinding.DialogFillQrLogOperationBinding
@@ -36,15 +38,20 @@ import com.nvsp.manta_terminal.databinding.FragmentMainBinding
 import com.nvsp.manta_terminal.viewmodels.MainFragmentViewModel
 import com.nvsp.manta_terminal.workplaces.Workplace
 import com.nvsp.manta_terminal.workplaces.WorkplaceAdapter
+import com.nvsp.nvmesapplibrary.TITAN_CLASS
+import com.nvsp.nvmesapplibrary.TITAN_ID
 import com.nvsp.nvmesapplibrary.architecture.BaseFragment
 import com.nvsp.nvmesapplibrary.communication.socket.MessageListener
 import com.nvsp.nvmesapplibrary.communication.socket.WebSocketManager
 import com.nvsp.nvmesapplibrary.databinding.DialogMainterenceFilterBinding
 import com.nvsp.nvmesapplibrary.menu.MenuButton
+import com.nvsp.nvmesapplibrary.menu.MenuButtonTerm
 import com.nvsp.nvmesapplibrary.menu.MenuDef
 import com.nvsp.nvmesapplibrary.queue.OPERATOR_MAIN_LOGGED
 import com.nvsp.nvmesapplibrary.queue.OPERATOR_MAIN_NOT_LOGGED
 import com.nvsp.nvmesapplibrary.queue.QueueAdapter
+import com.nvsp.nvmesapplibrary.queue.models.SystemFilters
+import com.nvsp.nvmesapplibrary.queue.models.WORK_QUEUE_ID
 import com.nvsp.nvmesapplibrary.queue.work_queue.WorkQueueActivity
 import com.nvsp.nvmesapplibrary.utils.CaptureActivity
 import com.nvsp.nvmesapplibrary.utils.ScreenUtils
@@ -57,8 +64,8 @@ class MainFragment :
     BaseFragment<FragmentMainBinding, MainFragmentViewModel>(MainFragmentViewModel::class),
     MessageListener {
 
-    val barcode=MutableLiveData<String>("")
-    val wpAdapter: WorkplaceAdapter by lazy {
+   private  val barcode=MutableLiveData<String>("")
+   private  val wpAdapter: WorkplaceAdapter by lazy {
         WorkplaceAdapter {
             selectedWorkplace(it)
         }
@@ -69,7 +76,7 @@ class MainFragment :
                 refreshData()
             }
         }
-    val resultLauncherCam =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val resultLauncherCam =registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val intentResult = IntentIntegrator.parseActivityResult(result.resultCode, result.data)
             if(intentResult.contents != null) {
@@ -77,7 +84,7 @@ class MainFragment :
             }
         }
     }
-    fun scanByQR(code:(String)->Unit){
+   private fun scanByQR(code:(String)->Unit){
         barcode.value=""
         val integrator =  IntentIntegrator(activity).apply {
             captureActivity = CaptureActivity::class.java
@@ -90,7 +97,7 @@ class MainFragment :
                 code(it)
         }
     }
-    val adapterWQ: QueueAdapter by lazy {
+   private  val adapterWQ: QueueAdapter by lazy {
         QueueAdapter(context, OPERATOR_MAIN_NOT_LOGGED,
             { queueData, i ->  //item Click
             }, { _, _ -> //item Long Click
@@ -101,7 +108,7 @@ class MainFragment :
 
             })
     }
-    val adapterOperator: OperatorAdapter by lazy {
+    private val adapterOperator: OperatorAdapter by lazy {
         OperatorAdapter(context, OPERATOR_MAIN_NOT_LOGGED, mutableListOf(),
             { item ->  //item Click
             }, { item -> //remove
@@ -112,7 +119,7 @@ class MainFragment :
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        WebSocketManager.init("ws:192.168.121.36:8090/API/Devices/4/Status", this)
+
         super.onCreate(savedInstanceState)
 
     }
@@ -147,6 +154,10 @@ class MainFragment :
         get() = FragmentMainBinding::inflate
 
     override fun initViews() {
+        viewModel.activeSetting.observe(viewLifecycleOwner){
+
+
+        }
 
         viewModel.login.observe(viewLifecycleOwner) { usr ->
 
@@ -155,9 +166,10 @@ class MainFragment :
                 adapterOperator.changeMode(OPERATOR_MAIN_NOT_LOGGED, usr?.idEmployee)
                 hideMenu()
             } else {
+
                 adapterWQ.changeMode(OPERATOR_MAIN_LOGGED)
                 adapterOperator.changeMode(OPERATOR_MAIN_LOGGED, usr.idEmployee)
-                viewModel.loadMenu()
+                viewModel.loadMenu(viewModel.selectedWPId, usr.role?:(0))
             }
 
             binding.ibAddOperation.isEnabled = usr != null
@@ -234,6 +246,21 @@ class MainFragment :
     }
 
     private fun selectedWorkplace(item: Workplace) {
+        val url = viewModel.activeSetting.value?.getIpAndPort()
+        val devId = BaseApp.remoteSettings?.id
+        WebSocketManager.close()
+        val urlAddress="ws://$url/API/Devices/$devId/Status/Workplace/${item.id}?roleId=${viewModel.login.value?.role}&editableListId=$WORK_QUEUE_ID&editableListFilterJson=[{\"argumentKey\":\"WorkplaceID\",\"argumentValue\":\"${item.id}\"}]"
+        Log.d("SOCKET INIT", "ip and port:$urlAddress ")
+        WebSocketManager.init(urlAddress, this)
+        CoroutineScope(Dispatchers.IO).launch {
+            WebSocketManager.connect()
+        }
+        viewModel.login.value?.let {
+            viewModel.loadMenu(item.id, it.role?:(0))
+
+
+        }
+
         binding.apply {
             viewModel.selectedWPId = item.id
             refreshData()
@@ -301,7 +328,7 @@ class MainFragment :
         }
     }
 
-    fun showMenu(menuDef:MenuDef, buttons:Array<Array<MenuButton>>){
+    fun showMenu(menuDef:MenuDef, buttons:Array<Array<MenuButtonTerm>>){
         binding.menuGrid.visibility=View.VISIBLE
         binding.menuGrid.removeAllViews()
         if(buttons.isNotEmpty()){
@@ -339,7 +366,7 @@ class MainFragment :
     }
 
     override fun onMessage(text: String?) {
-        //    addText( " Receive message: $text \n " )
+            addText( " Receive message: $text \n " )// todo receiuve data  vypnuto at to nespamuje
     }
 
     private fun addText(text: String?) {
@@ -347,7 +374,7 @@ class MainFragment :
     }
 
 
-    private fun fillMenuGrid(dataset:Array<Array<MenuButton>>){
+    private fun fillMenuGrid(dataset:Array<Array<MenuButtonTerm>>){
         dataset.forEachIndexed {row, buttonRow ->
             buttonRow.forEachIndexed { col, menuButton ->
                 when(menuButton.specialFunction){
@@ -424,7 +451,7 @@ class MainFragment :
 
 
     }
-    private fun addDivider(buttonDef:MenuButton){
+    private fun addDivider(buttonDef:MenuButtonTerm){
         val view = ImageView(requireContext())
         view.setImageResource(com.nvsp.nvmesapplibrary.R.drawable.separator)
         val layoutParams = GridLayout.LayoutParams()
@@ -445,9 +472,11 @@ class MainFragment :
         view.layoutParams = layoutParams
         binding.menuGrid.addView(view)
     }
-    private fun addButton(buttonDef: MenuButton){
+    private fun addButton(buttonDef: MenuButtonTerm){
         val view = NButton(requireContext())
+            view.setBorder(null)
         view.setText(buttonDef.label ?: "")
+        view.isEnabled = buttonDef.permission>0
         view.setOnClickListener {
             onClick(buttonDef)
         }
@@ -466,13 +495,36 @@ class MainFragment :
         binding.menuGrid.addView(view)
     }
 
-    private fun onClick(button: MenuButton) {
+    private fun onClick(button: MenuButtonTerm) {
         Log.d("BTN MENU CLICK", "click on :I${button.objectId}")
         when(button.objectId.toInt()){
-
+            1001->{
+                launchExternalModule(TITAN_ID, TITAN_CLASS)
+            }
+            100002->{
+                launchEvidenceTitan()
+            }
         }
     }
     fun Int.toPix()=(this*(context?.resources?.displayMetrics?.density?:(1f))+0.5f).toInt()
 
+    private fun launchEvidenceTitan(){
+        val sendIntent = Intent(Intent.ACTION_MAIN)
+        sendIntent.setComponent(ComponentName(TITAN_ID, TITAN_CLASS))
+        viewModel.login.value?.fillIntent(sendIntent)
+        sendIntent.putExtra(WORKPLACE_ID, viewModel.selectedWPId)
+        sendIntent.putExtra(TEAM_WORKING, viewModel.workplaces.value?.find { it.id == viewModel.selectedWPId }?.isRobot)
+        /* val sendIntent = requireActivity().packageManager.getLaunchIntentForPackage("com.nvsp.sico")
+         viewModel.login.value?.fillIntent(sendIntent)*/
+        startActivity(sendIntent)
+    }
+    private fun launchExternalModule(appId:String, appClass:String){
+        val sendIntent = Intent(Intent.ACTION_MAIN)
+        sendIntent.setComponent(ComponentName(appId, appClass))
+        viewModel.login.value?.fillIntent(sendIntent)
+        /* val sendIntent = requireActivity().packageManager.getLaunchIntentForPackage("com.nvsp.sico")
+         viewModel.login.value?.fillIntent(sendIntent)*/
+        startActivity(sendIntent)
+    }
 
 }

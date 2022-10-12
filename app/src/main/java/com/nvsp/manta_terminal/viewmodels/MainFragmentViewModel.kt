@@ -15,6 +15,7 @@ import com.nvsp.nvmesapplibrary.communication.volley.ServiceVolley
 import com.nvsp.nvmesapplibrary.database.LibRepository
 import com.nvsp.nvmesapplibrary.login.models.User
 import com.nvsp.nvmesapplibrary.menu.MenuButton
+import com.nvsp.nvmesapplibrary.menu.MenuButtonTerm
 import com.nvsp.nvmesapplibrary.menu.MenuDef
 import com.nvsp.nvmesapplibrary.queue.models.*
 import com.nvsp.nvmesapplibrary.rpc.OutData
@@ -26,10 +27,9 @@ class MainFragmentViewModel (private val repository: LibRepository, private val 
     CommunicationViewModel(repository,api){
     var selectedWPId:Int = 0
     val workplaces = MutableLiveData<List<Workplace>>()
-    val menu= MutableLiveData<Array<Array<MenuButton>>>()
+    val menu= MutableLiveData<Array<Array<MenuButtonTerm>>>()
     var menuDef : MenuDef?=null
     val operatorsList = MutableLiveData<List<Operator>>()
-   //WQ
     val onProgressWQ = MutableLiveData<Boolean>(false)
     val onProgressOP = MutableLiveData<Boolean>(false)
     var gridWQ: EditableModuleLayoutDefinition = EditableModuleLayoutDefinition(0, 0)
@@ -64,7 +64,8 @@ class MainFragmentViewModel (private val repository: LibRepository, private val 
             ),
             hideProgressOnEnd =  false,
             showProgress = false
-        ) { _, response ->
+        ) { code, response ->
+            if(code==200)
             response.getSingleObject()?.let {
                 gridWQ = ViewDefinition.getGrid(it)
                 definitonsWQ = ViewDefinition.createList(it)
@@ -78,7 +79,7 @@ class MainFragmentViewModel (private val repository: LibRepository, private val 
 
     fun loadContent(all:Boolean=false, user: User?=null){
         val jsonFilter = mutableListOf<SystemFilters>(
-            SystemFilters("ID_Workplace", selectedWPId.toString())
+            SystemFilters("WorkplaceID", selectedWPId.toString())
 
         )
         Log.d("VIEWMODEL MAIN", "jsonFilter: $jsonFilter")
@@ -110,11 +111,15 @@ class MainFragmentViewModel (private val repository: LibRepository, private val 
     }
     fun loadEmployees(){
         onProgressOP.value=true
-        val rpc = Rpc("SPMANTA_EmployeeOnWP")
-        val params = mutableListOf<RpcParam>()
-        params.add(RpcParam.putInt("WorkplaceID", selectedWPId))
-        rpc.addParams(params)
-        rpc.execute(api) { code, response ->
+        api.request(
+            com.nvsp.nvmesapplibrary.communication.models.Request(
+                Request.Method.GET,
+                Operator.getUrl(selectedWPId),
+                "",
+                null,
+                null
+            )
+        ) { code, response ->
             onProgressOP.value=false
             val gson = Gson()
             val itemType = object : TypeToken<List<Operator>>(){}.type
@@ -135,21 +140,24 @@ class MainFragmentViewModel (private val repository: LibRepository, private val 
             refreshData()
         }
     }
-    fun loadMenu(){
+    fun loadMenu(wpId:Int, role:Long){
         api.request(
             com.nvsp.nvmesapplibrary.communication.models.Request(
                 Request.Method.GET,
-                MenuDef.urlTerm(BaseApp.remoteSettings?.id?:(-1)),""
+                MenuDef.urlTerm2(role, wpId),""
             )
         ){ code, response ->
 
             val gson = Gson()
-            menuDef=gson.fromJson(response.getSingleObject().toString(), MenuDef::class.java)
             val obj= response.getSingleObject()
             obj?.let {
-                menuDef = Gson().fromJson(obj.toString(),MenuDef::class.java)
+            menuDef=gson.fromJson(obj.getJSONObject("menuDefinition").toString(), MenuDef::class.java)
+            Log.d("menuDef", "$menuDef")
+
+
                 menuDef?.let { def->
-                    menu.postValue(MenuButton.createList(obj.getJSONArray("menuButtons"), def))
+
+                    menu.postValue(MenuButtonTerm.createList(obj.getJSONArray("menuButtons"), def))
                 }
             }
         }

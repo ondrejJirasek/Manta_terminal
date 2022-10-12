@@ -18,11 +18,19 @@
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/background_light_radius_no_border.xml" value="0.3305" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/ic_baseline_logout_24.xml" value="0.3828125" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/ic_polyback.xml" value="0.1965" />
+        <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/ic_remove.xml" value="0.1505" />
+        <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/ic_remove_circle.xml" value="0.1505" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/ic_sea_back.xml" value="0.1965" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/ic_user.xml" value="0.3828125" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/light_radius_no_border__background.xml" value="0.3305" />
+        <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/rounded_border_dark.xml" value="0.236" />
+        <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/rounded_border_for_button.xml" value="0.236" />
+        <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/rounded_border_white.xml" value="0.236" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/drawable/rounded_button.xml" value="0.2065" />
+        <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/layout-w936dp/toolbar_clock.xml" value="0.140625" />
+        <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/layout-w936dp/toolbar_user.xml" value="0.140625" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/layout/button_default.xml" value="0.3536458333333333" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/layout/fragment_login_by_id.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/layout/fragment_login_by_name.xml" value="0.1675925925925926" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/LIBRARY/NvmesAppLibrary/src/main/res/layout/item_universal.xml" value="0.25" />
@@ -30,6 +38,7 @@
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/MantaTerminal/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.265" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/MantaTerminal/app/src/main/res/drawable/button_oper_background_round_left.xml" value="0.3615" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/MantaTerminal/app/src/main/res/drawable/button_oper_background_round_left_dark.xml" value="0.2065" />
+        <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/MantaTerminal/app/src/main/res/drawable/button_oper_background_round_left_light.xml" value="0.355" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/MantaTerminal/app/src/main/res/drawable/ic_gearplus.xml" value="0.3615" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/MantaTerminal/app/src/main/res/drawable/ic_handwork.xml" value="0.1965" />
         <entry key="..\:/Users/jirasek.ondrej/AndroidStudioProjects/MantaTerminal/app/src/main/res/drawable/ic_roboticarm.xml" value="0.1965" />
